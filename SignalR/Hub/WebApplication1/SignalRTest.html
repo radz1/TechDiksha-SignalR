@@ -1,0 +1,57 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <script src="Scripts/jquery-3.3.1.min.js"></script>
+    <script src="Scripts/jquery.signalR-2.4.1.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            // signalR integration
+            var con = $.hubConnection('http://localhost:51462');
+            con.logging = true;
+            var hub = con.createHubProxy('NotificationHub');
+
+            hub.on('ShowNotification', function (data) {
+                console.log('SignalR Update');
+                console.log(JSON.stringify(data));
+                $('#Message').text(data);
+            });
+
+            con.starting(function () {
+                //On Starting event
+            });
+
+            con.received(function () {
+                //On receiving data on connection.
+            });
+
+            con.connectionSlow(function () {
+                //when Connection slow or frequent dropping connection;
+            });
+
+            con.start()
+                .done(function () {                    
+                    hub.invoke('Register', "Group1");
+                    console.log('SignalR hub connection successfull');
+                })
+                .fail(function () {
+
+                });
+
+            con.disconnected(function () {
+                console.log('disconnected event');
+            });
+
+            con.reconnecting(function () {
+            });
+
+            con.reconnected(function () {
+            });
+        });
+    </script>
+    <title></title>
+</head>
+<body>
+    <span><h3>SignalR Message :</h3></span><div id="Message" style="color:red"></div>
+</body>
+</html>
